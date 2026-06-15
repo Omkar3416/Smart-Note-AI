@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <title>Smart Notes AI</title>
+
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+  <div class="container">
+
+    <a class="navbar-brand" href="/notes">
+
+      Smart Notes AI
+
+    </a>
+
+  </div>
+
+</nav>
+
+<div class="container mt-4">
+
+  <h1 class="text-center mb-4">
+    Welcome To Smart Notes AI
+  </h1>
+
+  <div class="card">
+
+    <div class="card-body">
+
+      <h2 class="mb-3">
+
+        Create Note
+
+      </h2>
+
+      <form
+              action="/notes"
+              method="post"
+              th:object="${noteRequest}">
+
+        <div class="mb-3">
+
+          <label class="form-label">
+
+            Title
+
+          </label>
+
+          <input
+                  type="text"
+                  th:field="*{title}"
+                  class="form-control">
+          <div
+                  class="text-danger"
+                  th:if="${#fields.hasErrors('title')}"
+                  th:errors="*{title}">
+          </div>
+
+
+
+        </div>
+
+        <div class="mb-3">
+
+          <label class="form-label">
+
+            Content
+
+          </label>
+
+          <textarea
+                  th:field="*{content}"
+                  rows="5"
+                  class="form-control">
+                </textarea>
+          <div
+                  class="text-danger"
+                  th:if="${#fields.hasErrors('content')}"
+                  th:errors="*{content}">
+          </div>
+
+        </div>
+
+        <button
+                type="submit"
+                class="btn btn-primary">
+
+          Save Note
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+  <div class="my-4"></div>
+
+  <h2 class="mt-5 mb-4">
+    All Notes
+  </h2>
+
+<div th:if="${#lists.isEmpty(notes)}">
+  No notes available.
+</div>
+
+  <div th:each="note : ${notes}">
+
+    <div class="card mb-3">
+
+      <div class="card-body">
+
+        <h4
+                class="card-title"
+                th:text="${note.title}">
+        </h4>
+
+        <p
+                class="card-text"
+                th:text="${note.content}">
+        </p>
+
+        <small class="text-muted">
+
+          Created:
+
+          <span
+                  th:text="${note.createdAt}">
+                </span>
+
+        </small>
+
+        <br><br>
+
+        <a
+                class="btn btn-warning btn-sm"
+                th:href="@{/notes/edit/{id}(id=${note.id})}">
+
+          Edit
+
+        </a>
+
+        <a
+                class="btn btn-danger btn-sm"
+                th:href="@{/notes/delete/{id}(id=${note.id})}">
+
+          Delete
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: smart-notes-ai
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smart_notes_db
+    username: notes_user
+    password: notes123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
