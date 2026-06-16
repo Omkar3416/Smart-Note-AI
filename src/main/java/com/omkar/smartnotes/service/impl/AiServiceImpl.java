@@ -3,6 +3,7 @@ package com.omkar.smartnotes.service.impl;
 import com.omkar.smartnotes.service.AiService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 @Service
 public class AiServiceImpl implements AiService {
@@ -16,29 +17,108 @@ public class AiServiceImpl implements AiService {
     @Override
     public String summarize(String noteContent) {
 
-        if (noteContent == null || noteContent.isBlank()) {
-            return "No content to summarize";
-        }
+        return chatClient.prompt()
+                .system("""
+                        You are Smart Notes AI.
 
-        try {
-            return chatClient
-                    .prompt()
-                    .system("""
-                        You are an expert note summarizer.
-                        Always summarize the user's input clearly.
-                        If input is short, still extract meaning and expand logically.
-                        Output 3-5 bullet points only.
-                    """)
-                    .user("""
-                        Summarize this note:
+                        Analyze the note.
 
-                        %s
-                    """.formatted(noteContent))
-                    .call()
-                    .content();
+                        If it looks like:
+                        - a topic
+                        - technology
+                        - framework
+                        - concept
 
-        } catch (Exception e) {
-            return "AI error: " + e.getMessage();
-        }
+                        explain it.
+
+                        If it looks like meeting notes,
+                        summarize it.
+
+                        If it looks like tasks,
+                        extract action items.
+                        """)
+                .user(noteContent)
+                .call()
+                .content();
+    }
+
+    @Override
+    public Flux<String> streamSummary(String noteContent) {
+
+        return chatClient.prompt()
+                .system("""
+                        You are Smart Notes AI.
+
+                        Stream the response progressively.
+
+                        Use markdown formatting.
+                        """)
+                .user(noteContent)
+                .stream()
+                .content();
+    }
+
+    @Override
+    public String explain(String topic) {
+
+        return chatClient.prompt()
+                .system("""
+                        You are an expert software architect.
+
+                        Explain topics deeply.
+
+                        Include:
+                        - Overview
+                        - Architecture
+                        - Features
+                        - Advantages
+                        - Example
+                        - Interview Questions
+                        """)
+                .user(topic)
+                .call()
+                .content();
+    }
+
+    @Override
+    public String improve(String note) {
+
+        return chatClient.prompt()
+                .system("""
+                        You are a professional editor.
+
+                        Improve the note.
+
+                        Fix:
+                        - grammar
+                        - spelling
+                        - structure
+                        - readability
+
+                        Keep original meaning.
+
+                        Return improved version only.
+                        """)
+                .user(note)
+                .call()
+                .content();
+    }
+
+    @Override
+    public String chat(String message) {
+
+        return chatClient.prompt()
+                .system("""
+                        You are Smart Notes AI Assistant.
+
+                        Answer clearly.
+
+                        Use notes context when available.
+
+                        Be concise but helpful.
+                        """)
+                .user(message)
+                .call()
+                .content();
     }
 }
