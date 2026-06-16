@@ -9,12 +9,13 @@ public class AiServiceImpl implements AiService {
 
     private final ChatClient chatClient;
 
-    public AiServiceImpl(ChatClient.Builder chatClientBuilder) {
-        this.chatClient = chatClientBuilder.build();
+    public AiServiceImpl(ChatClient chatClient) {
+        this.chatClient = chatClient;
     }
 
     @Override
     public String summarize(String noteContent) {
+
         if (noteContent == null || noteContent.isBlank()) {
             return "No content to summarize";
         }
@@ -22,12 +23,22 @@ public class AiServiceImpl implements AiService {
         try {
             return chatClient
                     .prompt()
-                    .system("You are a helpful assistant that summarizes notes clearly.")
-                    .user(noteContent)
+                    .system("""
+                        You are an expert note summarizer.
+                        Always summarize the user's input clearly.
+                        If input is short, still extract meaning and expand logically.
+                        Output 3-5 bullet points only.
+                    """)
+                    .user("""
+                        Summarize this note:
+
+                        %s
+                    """.formatted(noteContent))
                     .call()
                     .content();
+
         } catch (Exception e) {
-            return "AI is temporarily unavailable. Please try again later.";
+            return "AI error: " + e.getMessage();
         }
     }
 }

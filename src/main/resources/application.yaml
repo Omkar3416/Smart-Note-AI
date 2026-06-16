@@ -15,12 +15,18 @@ spring:
       hibernate:
         format_sql: true
 
+#  ai:
+#    model:
+#      chat: google-genai
+#    google:
+#      genai:
+#        api-key: ${GEMINI_API_KEY}
+#        chat:
+#          options:
+#            model: gemini-1.5-flash
   ai:
-    model:
-      chat: google-genai
-    google:
-      genai:
-        api-key: ${GEMINI_API_KEY}
-        chat:
-          options:
-            model: gemini-1.5-flash
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3
