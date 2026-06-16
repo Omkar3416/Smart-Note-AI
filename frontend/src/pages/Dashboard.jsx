@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ChatPanel from "../components/ChatPanel";
+import NoteCard from "../components/NoteCard";
 
 import {
     getAllNotes,
@@ -125,7 +126,7 @@ function Dashboard() {
             style={{
                 display: "flex",
                 height: "100vh",
-                background: "#f5f7fb"
+                background: "#eef2ff"
             }}
         >
 
@@ -134,10 +135,11 @@ function Dashboard() {
             <div
                 style={{
                     width: "350px",
-                    background: "#fff",
+                    background: "#ffffff",
                     borderRight: "1px solid #ddd",
                     overflowY: "auto",
-                    padding: "20px"
+                    padding: "20px",
+                    boxShadow:"4px 0 20px rgba(0,0,0,.05)"
                 }}
             >
 
@@ -187,9 +189,12 @@ function Dashboard() {
                 <button
                     onClick={handleCreateNote}
                     style={{
-                        width: "100%",
-                        marginTop: "10px",
-                        padding: "10px"
+                        width:"100%",
+                        marginTop:"10px",
+                        background:"#2563eb",
+                        color:"white",
+                        padding:"12px 18px",
+                        borderRadius:"10px"
                     }}
                 >
                     Save Note
@@ -198,40 +203,15 @@ function Dashboard() {
                 <hr />
 
                 {filteredNotes.map(note => (
-
-                    <div
+                    <NoteCard
                         key={note.id}
-                        onClick={() => {
-
+                        note={note}
+                        onSelect={(note) => {
                             setSelectedNote(note);
-
                             setTitle(note.title);
-
-                            setContent(
-                                note.content
-                            );
+                            setContent(note.content);
                         }}
-                        style={{
-                            padding: "15px",
-                            cursor: "pointer",
-                            borderBottom:
-                                "1px solid #eee"
-                        }}
-                    >
-                        <h4>
-                            {note.title}
-                        </h4>
-
-                        <small>
-                            {
-                                note.content
-                                    ?.substring(
-                                        0,
-                                        60
-                                    )
-                            }
-                        </small>
-                    </div>
+                    />
                 ))}
             </div>
 
@@ -273,6 +253,11 @@ function Dashboard() {
                                 onClick={() =>
                                     setEditing(true)
                                 }
+                                style={{
+                                    background:"#f59e0b",
+                                    color:"white",
+                                    padding:"12px 18px"
+                                }}
                             >
                                 Edit
                             </button>
@@ -281,6 +266,11 @@ function Dashboard() {
                                 onClick={
                                     handleDeleteNote
                                 }
+                                style={{
+                                    background:"#ef4444",
+                                    color:"white",
+                                    padding:"12px 18px"
+                                }}
                             >
                                 Delete
                             </button>
@@ -289,6 +279,11 @@ function Dashboard() {
                                 onClick={
                                     generateSummary
                                 }
+                                style={{
+                                    background:"#7c3aed",
+                                    color:"white",
+                                    padding:"12px 18px"
+                                }}
                             >
                                 Generate AI Summary
                             </button>
@@ -360,11 +355,12 @@ function Dashboard() {
                             style={{
                                 marginTop: "30px",
                                 background:
-                                    "#fff",
+                                    "#ffffff",
                                 padding:
                                     "20px",
                                 borderRadius:
-                                    "12px"
+                                    "12px",
+                                boxShadow:"4px 0 20px rgba(0,0,0,.05)"
                             }}
                         >
                             <ChatPanel />
