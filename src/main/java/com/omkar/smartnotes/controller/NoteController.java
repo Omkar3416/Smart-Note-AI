@@ -1,23 +1,24 @@
 package com.omkar.smartnotes.controller;
 
+import com.omkar.smartnotes.dto.NoteRequest;
+import com.omkar.smartnotes.entity.Note;
+import com.omkar.smartnotes.service.AiService;
 import com.omkar.smartnotes.service.NoteService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import com.omkar.smartnotes.dto.NoteRequest;
-import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
-
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class NoteController {
 
     private final NoteService noteService;
+    private final AiService aiService;
 
-    public NoteController(NoteService noteService) {
+    public NoteController(NoteService noteService, AiService aiService) {
         this.noteService = noteService;
+        this.aiService = aiService;
     }
 
     @GetMapping("/notes")
@@ -103,5 +104,24 @@ public class NoteController {
         noteService.createNote(request);
 
         return "redirect:/notes";
+    }
+
+    // ✅ AI SUMMARY FEATURE (NEW)
+    @GetMapping("/notes/summary/{id}")
+    public String summarizeNote(@PathVariable Long id, Model model) {
+
+        Note note = noteService.getNoteById(id);
+
+        model.addAttribute("note", note);
+
+        try {
+            String summary = aiService.summarize(note.getContent());
+            model.addAttribute("summary", summary);
+        } catch (Exception e) {
+            model.addAttribute("summary", "AI Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return "note-summary";
     }
 }
